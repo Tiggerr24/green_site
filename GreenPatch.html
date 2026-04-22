@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenPatch — Трансдермальная система для лечения гнойных ран</title>
+    <meta name="description" content="Первая трансдермальная система с наночастицами оксида цинка и контролируемым высвобождением активных компонентов для лечения гнойных ран. Национальный детский технопарк, 2026.">
+    <meta name="keywords" content="GreenPatch, трансдермальная система, ZnONP, метронидазол, гнойные раны, наночастицы, Национальный детский технопарк">
+    <meta name="author" content="Борисевич Вадим, Полторацкая Милана, Пекарская Эльвира">
+    
+    <meta property="og:title" content="GreenPatch — Трансдермальная система для лечения гнойных ран">
+    <meta property="og:description" content="Инновационная трёхслойная система с ZnONP и метронидазолом для борьбы с аэробными и анаэробными инфекциями в ранах.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalWebPage",
+        "name": "GreenPatch — Трансдермальная система для лечения гнойных ран",
+        "description": "Трансдермальная система с наночастицами оксида цинка для лечения гнойных ран",
+        "author": [
+            { "@type": "Person", "name": "Борисевич Вадим" },
+            { "@type": "Person", "name": "Полторацкая Милана" },
+            { "@type": "Person", "name": "Пекарская Эльвира" }
+        ],
+        "publisher": {
+            "@type": "Organization",
+            "name": "УО «Национальный детский технопарк»",
+            "address": { "@type": "PostalAddress", "addressLocality": "Минск", "addressCountry": "BY" }
+        },
+        "datePublished": "2026-04-22"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                            400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d',
+                            800: '#166534', 900: '#14532d', 950: '#052e16',
+                        },
+                        deep: { green: '#0f2818', teal: '#1a4332', emerald: '#064e3b' },
+                        sand: {
+                            50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1',
+                            400: '#a8a29e', 500: '#78716c', 600: '#57534e', 700: '#44403c',
+                            800: '#292524', 900: '#1c1917',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: #fafaf9; overflow-x: hidden; color: #1c1917; }
+        
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+        
+        /* Noise — убран на тач-устройствах для производительности */
+        .noise { position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        @media (pointer: coarse) { .noise { display: none; } }
+        
+        .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); }
+        .glass-dark { background: rgba(15,40,24,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+        .hero-bg { background: radial-gradient(ellipse at 30% 20%, rgba(34,197,94,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(20,83,45,0.06) 0%, transparent 50%), linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%); }
+        .btn-primary { background: linear-gradient(135deg, #14532d 0%, #166534 100%); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .btn-primary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%); opacity: 0; transition: opacity 0.3s; }
+        .btn-primary:hover::after { opacity: 1; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(20,83,45,0.4); }
+        .btn-primary:focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }
+        .tag { letter-spacing: 0.15em; text-transform: uppercase; font-size: 0.7rem; font-weight: 600; }
+        
+        /* Therapy Cards */
+        .therapy-card { background: linear-gradient(145deg, rgba(127,29,29,0.05) 0%, rgba(153,27,27,0.08) 100%); border: 1px solid rgba(220,38,38,0.15); transition: all 0.5s cubic-bezier(0.23,1,0.32,1); position: relative; overflow: hidden; }
+        .therapy-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ef4444, #b91c1c); transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease; }
+        .therapy-card:hover::before { transform: scaleX(1); }
+        .therapy-card:hover { transform: translateY(-8px); box-shadow: 0 32px 64px -16px rgba(127,29,29,0.2); border-color: rgba(220,38,38,0.3); }
+        .therapy-icon { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; }
+        .therapy-list li { position: relative; padding-left: 1.5rem; margin-bottom: 1rem; color: #57534e; line-height: 1.6; }
+        .therapy-list li::before { content: ''; position: absolute; left: 0; top: 0.6rem; width: 8px; height: 2px; background: #ef4444; border-radius: 2px; }
+        
+        /* Layer Cards */
+        .layer-card { transition: all 0.5s cubic-bezier(0.23,1,0.32,1); position: relative; overflow: hidden; cursor: pointer; }
+        .layer-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.4) 100%); opacity: 0; transition: opacity 0.5s ease; }
+        .layer-card:hover::before { opacity: 1; }
+        .layer-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 32px 64px -16px rgba(15,40,24,0.18); }
+        .layer-card.active { transform: translateY(-16px) scale(1.03); box-shadow: 0 40px 80px -20px rgba(15,40,24,0.25); border-color: #22c55e; }
+        .layer-number { font-size: 8rem; font-weight: 900; line-height: 1; position: absolute; right: -10px; top: -20px; opacity: 0.06; pointer-events: none; }
+        
+        /* 3D Section */
+        #interactive-3d { position: relative; width: 100%; height: min(700px, 80vh); }
+        #three-canvas-container, #css3d-fallback { width: 100%; height: 100%; border-radius: 1.5rem; position: absolute; inset: 0; }
+        #css3d-fallback { display: none; perspective: 1200px; overflow: hidden; background: radial-gradient(circle at center, #143628 0%, #0f2818 100%); }
+        .css3d-stage { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.1s linear; }
+        .css3d-layer { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform-style: preserve-3d; transition: all 0.6s cubic-bezier(0.23,1,0.32,1); box-shadow: 0 20px 60px rgba(0,0,0,0.3); backdrop-filter: blur(4px); }
+        
+        .layer-info-panel { position: absolute; top: 2rem; right: 2rem; width: 320px; opacity: 0; transform: translateX(20px); transition: all 0.5s ease; pointer-events: none; }
+        .layer-info-panel.visible { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .layer-selector { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem; z-index: 10; }
+        .layer-dot { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .layer-dot:hover, .layer-dot.active { background: rgba(34,197,94,0.4); border-color: #22c55e; transform: scale(1.1); }
+        .layer-dot:focus-visible { outline: 2px solid #4ade80; outline-offset: 2px; }
+        
+        /* Eco Timeline */
+        .eco-timeline { position: relative; padding: 2rem 0; }
+        .eco-line { position: absolute; top: 50%; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #e7e5e4, #d6d3d1); border-radius: 2px; transform: translateY(-50%); z-index: 0; }
+        .eco-line-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #15803d); width: 0%; border-radius: 2px; transition: width 1.5s ease; }
+        .eco-step { position: relative; z-index: 1; cursor: pointer; }
+        .eco-circle { width: 80px; height: 80px; border-radius: 50%; background: white; border: 4px solid #e7e5e4; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .eco-step:hover .eco-circle, .eco-step.active .eco-circle { border-color: #22c55e; background: #f0fdf4; transform: scale(1.15); box-shadow: 0 8px 24px rgba(34,197,94,0.2); }
+        .eco-card { position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%) translateY(10px); width: 260px; background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); opacity: 0; pointer-events: none; transition: all 0.4s ease; border: 1px solid #e7e5e4; }
+        .eco-step:hover .eco-card, .eco-step.active .eco-card { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .eco-card::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 10px solid transparent; border-top-color: white; }
+        
+        /* Data bars */
+        .data-bar { transition: width 1.5s cubic-bezier(0.23,1,0.32,1); }
+        .table-row { transition: background 0.2s; }
+        .table-row:hover { background: rgba(34,197,94,0.04); }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        
+        /* Step lines mechanism */
+        .step-line { position: absolute; left: 31px; top: 64px; bottom: -24px; width: 2px; background: linear-gradient(to bottom, rgba(34,197,94,0.4), transparent); }
+        
+        /* Glow text */
+        .glow-text { text-shadow: 0 0 40px rgba(34,197,94,0.3); }
+        
+        /* Metric cards */
+        .metric-card { position: relative; overflow: hidden; }
+        .metric-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #22c55e, #15803d); transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease; }
+        .metric-card:hover::after { transform: scaleX(1); }
+        
+        /* Back to top */
+        #back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; border-radius: 50%; background: #14532d; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 50; box-shadow: 0 8px 24px rgba(20,83,45,0.3); border: none; }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); }
+        #back-to-top:hover { background: #166534; transform: translateY(-2px); }
+        #back-to-top:focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }
+        
+        /* Nav active state */
+        .nav-link { position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #15803d; transition: width 0.3s ease; border-radius: 1px; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(40px); }
+        
+        /* Accessibility */
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+        :focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }
+        
+        @media (max-width: 768px) {
+            #interactive-3d { height: min(500px, 70vh); }
+            .layer-info-panel { width: 260px; top: 1rem; right: 1rem; }
+            .eco-card { width: 200px; padding: 1rem; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="noise" aria-hidden="true"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="navbar" role="navigation" aria-label="Основная навигация">
+        <div class="max-w-7xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-3 focus-visible:rounded-lg">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-forest-700 to-forest-900 flex items-center justify-center shadow-lg shadow-forest-900/20">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-deep-green">GreenPatch</span>
+                </a>
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-600">
+                    <a href="#problem" class="nav-link hover:text-forest-700 transition-colors" data-section="problem">Проблема</a>
+                    <a href="#limits" class="nav-link hover:text-forest-700 transition-colors" data-section="limits">Лимиты</a>
+                    <a href="#solution" class="nav-link hover:text-forest-700 transition-colors" data-section="solution">Решение</a>
+                    <a href="#model3d" class="nav-link hover:text-forest-700 transition-colors" data-section="model3d">3D модель</a>
+                    <a href="#results" class="nav-link hover:text-forest-700 transition-colors" data-section="results">Результаты</a>
+                    <a href="#eco" class="nav-link hover:text-forest-700 transition-colors" data-section="eco">Эко</a>
+                </div>
+                <a href="mailto:contact@greenpatch.by?subject=GreenPatch%20—%20запрос%20информации" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-semibold inline-flex items-center gap-2">
+                    Связаться
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center relative overflow-hidden pt-24" id="hero" aria-label="Главный экран">
+        <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div class="absolute top-1/4 -left-32 w-96 h-96 bg-forest-300/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-forest-700/10 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+            <div class="space-y-8">
+                <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full text-xs font-semibold text-forest-800 border border-forest-200/50">
+                    <span class="w-1.5 h-1.5 rounded-full bg-forest-500 animate-pulse"></span>
+                    Инновация 2026 — Национальный детский технопарк
+                </div>
+                <h1 class="text-6xl lg:text-8xl font-black leading-[0.9] tracking-tight text-deep-green">
+                    Green<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-600 to-forest-800 glow-text">Patch</span>
+                </h1>
+                <p class="text-lg text-stone-600 max-w-lg leading-relaxed font-light">
+                    Первая трансдермальная система с наночастицами оксида цинка и контролируемым высвобождением активных компонентов для лечения гнойных ран.
+                </p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <button class="btn-primary text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2" onclick="document.getElementById('solution').scrollIntoView({behavior:'smooth'})">
+                        <span>Узнать больше</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                    </button>
+                    <button class="border border-stone-300 text-stone-700 px-8 py-4 rounded-full font-semibold hover:bg-white hover:border-forest-300 transition-all" onclick="document.getElementById('model3d').scrollIntoView({behavior:'smooth'})">
+                        3D модель
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-10 pt-6">
+                    <div><div class="text-4xl font-black text-deep-green tabular-nums" data-count="100">100</div><div class="text-xs text-stone-500 mt-1 uppercase tracking-wider font-medium">млн ран ежегодно</div></div>
+                    <div class="w-px h-12 bg-stone-300 hidden sm:block"></div>
+                    <div><div class="text-4xl font-black text-deep-green tabular-nums" data-count="3">3</div><div class="text-xs text-stone-500 mt-1 uppercase tracking-wider font-medium">активных слоя</div></div>
+                    <div class="w-px h-12 bg-stone-300 hidden sm:block"></div>
+                    <div><div class="text-4xl font-black text-deep-green">1:5</div><div class="text-xs text-stone-500 mt-1 uppercase tracking-wider font-medium">оптимальное соотношение</div></div>
+                </div>
+            </div>
+            <div class="relative flex items-center justify-center">
+                <div class="w-full aspect-square max-w-lg relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-forest-200/40 to-forest-400/20 rounded-full blur-2xl animate-pulse" aria-hidden="true"></div>
+                    <!-- Абстрактные декоративные элементы вместо фото -->
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-2xl bg-gradient-to-br from-sky-200/60 to-sky-300/40 shadow-xl rotate-12 opacity-80 border border-white/50 backdrop-blur-sm flex items-center justify-center" aria-hidden="true">
+                        <svg class="w-16 h-16 text-sky-700/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <div class="absolute bottom-12 left-0 w-28 h-28 rounded-2xl bg-gradient-to-br from-amber-200/60 to-amber-300/40 shadow-xl -rotate-12 opacity-80 border border-white/50 backdrop-blur-sm flex items-center justify-center" aria-hidden="true">
+                        <svg class="w-14 h-14 text-amber-700/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    </div>
+                    <div class="absolute top-1/2 left-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-200/60 to-emerald-300/40 shadow-xl rotate-6 opacity-80 border border-white/50 backdrop-blur-sm flex items-center justify-center" aria-hidden="true">
+                        <svg class="w-12 h-12 text-emerald-700/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div class="relative z-10 w-full h-full flex items-center justify-center">
+                        <div class="w-64 h-64 rounded-full bg-gradient-to-br from-forest-100 to-white border border-forest-200 flex items-center justify-center shadow-2xl">
+                            <svg class="w-32 h-32 text-forest-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="py-32 bg-white relative" aria-labelledby="problem-heading">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="max-w-2xl mb-20">
+                <div class="tag text-forest-600 mb-4">Масштаб проблемы</div>
+                <h2 id="problem-heading" class="text-5xl font-black text-deep-green leading-tight mb-6">Гнойные раны — вторая причина внутрибольничных инфекций</h2>
+                <p class="text-stone-500 text-lg">По данным ВОЗ, ежегодно регистрируется более 100 миллионов случаев острых и хронических ран.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="metric-card glass rounded-3xl p-8 border border-stone-100">
+                    <div class="text-5xl font-black text-deep-green mb-3 tabular-nums">>100 <span class="text-2xl font-bold text-stone-400">млн</span></div>
+                    <div class="text-stone-600 leading-relaxed">случаев острых и хронических ран ежегодно в мире</div>
+                </div>
+                <div class="metric-card glass rounded-3xl p-8 border border-stone-100">
+                    <div class="text-5xl font-black text-deep-green mb-3 tabular-nums">7–10<span class="text-2xl font-bold text-stone-400">%</span></div>
+                    <div class="text-stone-600 leading-relaxed">осложняются инфекцией, формируя устойчивые биоплёнки</div>
+                </div>
+                <div class="metric-card glass rounded-3xl p-8 border border-stone-100">
+                    <div class="text-5xl font-black text-deep-green mb-3">2-е <span class="text-2xl font-bold text-stone-400">место</span></div>
+                    <div class="text-stone-600 leading-relaxed">раневые инфекции в структуре ВБИ после респираторных</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Limits of Traditional Therapy -->
+    <section id="limits" class="py-32 bg-stone-50" aria-labelledby="limits-heading">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <div class="tag text-red-600 mb-4">Критический анализ</div>
+                <h2 id="limits-heading" class="text-5xl font-black text-deep-green">Почему старые методы <span class="text-red-600">не справляются</span></h2>
+                <p class="text-stone-500 mt-4 max-w-2xl mx-auto">Системные и топические подходы имеют фундаментальные ограничения, которые усугубляют антибиотикорезистентность.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="therapy-card rounded-3xl p-10">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-16 h-16 rounded-2xl therapy-icon flex items-center justify-center shadow-sm" aria-hidden="true">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-deep-green">Системные антибиотики</h3>
+                            <p class="text-sm text-red-600 font-medium mt-1">Ограниченная эффективность</p>
+                        </div>
+                    </div>
+                    <ul class="therapy-list text-stone-600">
+                        <li><strong class="text-deep-green">Плохое проникновение</strong> в ишемизированные ткани — концентрация в очаге ниже терапевтической</li>
+                        <li><strong class="text-deep-green">Системные побочные эффекты</strong> — нефротоксичность, гепатотоксичность, дисбиоз кишечника</li>
+                        <li><strong class="text-deep-green">Селекция резистентных штаммов</strong> — глобальный рост MRSA, VRE и ESKAPE-патогенов</li>
+                        <li><strong class="text-deep-green">Неспособность проникать</strong> в зрелые биоплёнки, где бактерии в 1000 раз устойчивее</li>
+                    </ul>
+                    <div class="mt-8 pt-6 border-t border-red-100">
+                        <div class="flex items-center gap-3 text-sm text-red-700 bg-red-50 px-4 py-3 rounded-xl">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span class="font-medium">Результат: хронизация раны и септические осложнения</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="therapy-card rounded-3xl p-10">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-16 h-16 rounded-2xl therapy-icon flex items-center justify-center shadow-sm" aria-hidden="true">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-deep-green">Топические антисептики</h3>
+                            <p class="text-sm text-red-600 font-medium mt-1">Цитотоксичность и резистентность</p>
+                        </div>
+                    </div>
+                    <ul class="therapy-list text-stone-600">
+                        <li><strong class="text-deep-green">Короткое время действия</strong> — йод и хлоргексидин теряют активность через 2–4 часа</li>
+                        <li><strong class="text-deep-green">Цитотоксичность</strong> для клеток регенерации — кератиноциты и фибробласты погибают</li>
+                        <li><strong class="text-deep-green">Быстрое развитие резистентности</strong> — особенно к серебросодержащим препаратам</li>
+                        <li><strong class="text-deep-green">Отсутствие селективности</strong> — уничтожают полезную микрофлору вместе с патогенами</li>
+                    </ul>
+                    <div class="mt-8 pt-6 border-t border-red-100">
+                        <div class="flex items-center gap-3 text-sm text-red-700 bg-red-50 px-4 py-3 rounded-xl">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span class="font-medium">Результат: замедление заживления и рецидив инфекции</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comparison bar -->
+            <div class="mt-16 bg-white rounded-3xl p-8 border border-stone-200 shadow-sm">
+                <h4 class="text-center font-bold text-deep-green mb-8">Сравнительная эффективность подходов</h4>
+                <div class="space-y-6 max-w-3xl mx-auto">
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium"><span class="text-stone-600">Проникновение в биоплёнку</span><span class="text-deep-green">GreenPatch</span></div>
+                        <div class="h-3 bg-stone-100 rounded-full overflow-hidden flex">
+                            <div class="h-full bg-red-400 rounded-full data-bar" style="width: 25%" aria-hidden="true"></div>
+                            <div class="h-full bg-forest-500 rounded-full data-bar" style="width: 75%" aria-hidden="true"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-stone-400 mt-1"><span>Традиция: 25%</span><span>GreenPatch: 95%</span></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium"><span class="text-stone-600">Время активности</span><span class="text-deep-green">GreenPatch</span></div>
+                        <div class="h-3 bg-stone-100 rounded-full overflow-hidden flex">
+                            <div class="h-full bg-red-400 rounded-full data-bar" style="width: 15%" aria-hidden="true"></div>
+                            <div class="h-full bg-forest-500 rounded-full data-bar" style="width: 85%" aria-hidden="true"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-stone-400 mt-1"><span>Традиция: 2–4 ч</span><span>GreenPatch: 24–48 ч</span></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium"><span class="text-stone-600">Цитотоксичность</span><span class="text-deep-green">GreenPatch</span></div>
+                        <div class="h-3 bg-stone-100 rounded-full overflow-hidden flex">
+                            <div class="h-full bg-red-400 rounded-full data-bar" style="width: 80%" aria-hidden="true"></div>
+                            <div class="h-full bg-forest-500 rounded-full data-bar" style="width: 20%" aria-hidden="true"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-stone-400 mt-1"><span>Традиция: высокая</span><span>GreenPatch: минимальная</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution: 3 Layers -->
+    <section id="solution" class="py-32 bg-white relative overflow-hidden" aria-labelledby="solution-heading">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-forest-50/60 to-transparent pointer-events-none" aria-hidden="true"></div>
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <div class="max-w-2xl mb-20">
+                <div class="tag text-forest-600 mb-4">Наше решение</div>
+                <h2 id="solution-heading" class="text-5xl font-black text-deep-green leading-tight mb-6">Три слоя — три механизма защиты</h2>
+                <p class="text-stone-500 text-lg">Каждый слой работает на своей глубине, обеспечивая полный спектр действия против аэробов, анаэробов и биоплёнок.</p>
+            </div>
+            
+            <!-- Generated by JS -->
+            <div id="layer-cards-container" class="grid lg:grid-cols-3 gap-6 mb-16"></div>
+        </div>
+    </section>
+
+    <!-- Interactive 3D Model Section -->
+    <section id="model3d" class="py-20 bg-deep-green text-white relative overflow-hidden" aria-labelledby="model3d-heading">
+        <div class="absolute inset-0 opacity-20" aria-hidden="true">
+            <div class="absolute top-20 left-20 w-72 h-72 border border-white/20 rounded-full"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 border border-white/10 rounded-full"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-12">
+                <div class="tag text-forest-300 mb-4">Интерактивная модель</div>
+                <h2 id="model3d-heading" class="text-5xl font-black mb-4">Исследуйте слои <span class="text-forest-300">GreenPatch</span></h2>
+                <p class="text-white/70 text-lg max-w-2xl mx-auto">Нажмите на слой в 3D-модели, чтобы увидеть его состав и механизм действия. Перетаскивайте мышью для вращения.</p>
+            </div>
+            
+            <div class="relative rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm" id="interactive-3d" role="img" aria-label="Интерактивная 3D модель GreenPatch">
+                <div id="three-canvas-container"></div>
+                
+                <!-- CSS 3D Fallback -->
+                <div id="css3d-fallback" aria-hidden="true">
+                    <div class="css3d-stage" id="css3d-stage">
+                        <div class="css3d-layer" id="css-layer-0" style="width: 280px; height: 280px; margin-left: -140px; margin-top: -140px; background: radial-gradient(circle, rgba(14,165,233,0.25) 0%, rgba(14,165,233,0.05) 70%); border: 2px solid rgba(14,165,233,0.5); transform: translateY(-50px) rotateX(60deg);"></div>
+                        <div class="css3d-layer" id="css-layer-1" style="width: 260px; height: 260px; margin-left: -130px; margin-top: -130px; background: radial-gradient(circle, rgba(245,158,11,0.25) 0%, rgba(245,158,11,0.05) 70%); border: 2px solid rgba(245,158,11,0.5); transform: translateY(0px) rotateX(60deg);"></div>
+                        <div class="css3d-layer" id="css-layer-2" style="width: 240px; height: 240px; margin-left: -120px; margin-top: -120px; background: radial-gradient(circle, rgba(16,185,129,0.25) 0%, rgba(16,185,129,0.05) 70%); border: 2px solid rgba(16,185,129,0.5); transform: translateY(50px) rotateX(60deg);"></div>
+                    </div>
+                </div>
+                
+                <!-- Info Panel -->
+                <div id="layer-info" class="layer-info-panel glass-dark rounded-2xl p-6 border border-white/10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div id="info-icon" class="w-10 h-10 rounded-xl bg-forest-500/20 flex items-center justify-center text-forest-300" aria-hidden="true">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <div id="info-subtitle" class="text-xs text-forest-300 uppercase tracking-wider font-semibold">Контактный слой</div>
+                            <h3 id="info-title" class="text-xl font-bold text-white">Метронидазол + ZnONP</h3>
+                        </div>
+                    </div>
+                    <p id="info-desc" class="text-white/70 text-sm leading-relaxed mb-4">Синергистический эффект: ZnO уничтожает аэробов на поверхности раны, метронидазол проникает в глубину к анаэробам.</p>
+                    <div id="info-tags" class="flex flex-wrap gap-2"></div>
+                </div>
+                
+                <!-- Layer Selector -->
+                <div class="layer-selector" role="tablist" aria-label="Выбор слоя">
+                    <button class="layer-dot active" onclick="selectLayer(0)" id="dot-0" role="tab" aria-selected="true" aria-label="Внешний слой" tabindex="0">1</button>
+                    <button class="layer-dot" onclick="selectLayer(1)" id="dot-1" role="tab" aria-selected="false" aria-label="Средний слой" tabindex="0">2</button>
+                    <button class="layer-dot" onclick="selectLayer(2)" id="dot-2" role="tab" aria-selected="false" aria-label="Контактный слой" tabindex="0">3</button>
+                </div>
+                
+                <!-- Hint -->
+                <div class="absolute top-6 left-6 text-xs text-white/40 flex items-center gap-2 pointer-events-none select-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                    Кликните на слой, перетащите для вращения
+                </div>
+                
+                <!-- Loading -->
+                <div id="three-loading" class="absolute inset-0 flex items-center justify-center bg-deep-green z-20 transition-opacity duration-500">
+                    <div class="text-center">
+                        <div class="w-12 h-12 border-4 border-forest-500/30 border-t-forest-400 rounded-full animate-spin mx-auto mb-4"></div>
+                        <p class="text-white/60 text-sm">Загрузка 3D модели...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mechanism -->
+    <section id="mechanism" class="py-32 bg-stone-900 text-white relative overflow-hidden" aria-labelledby="mechanism-heading">
+        <div class="absolute inset-0 opacity-10" aria-hidden="true">
+            <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+        </div>
+        <div class="max-w-5xl mx-auto px-6 relative z-10">
+            <div class="max-w-2xl mb-20">
+                <div class="tag text-forest-300 mb-4">Механизм действия</div>
+                <h2 id="mechanism-heading" class="text-5xl font-black mb-6">Как это <span class="text-forest-300">работает</span></h2>
+                <p class="text-white/70 text-lg">Четыре последовательных этапа уничтожения патогенов многослойной системой.</p>
+            </div>
+            <div class="space-y-12 relative">
+                <div class="flex items-start gap-8 group relative">
+                    <div class="step-line" aria-hidden="true"></div>
+                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
+                        <span class="text-2xl font-black text-forest-300">01</span>
+                    </div>
+                    <div class="flex-1 pt-1">
+                        <h3 class="text-2xl font-bold mb-3">Контакт наночастицы с мембраной</h3>
+                        <p class="text-white/70 text-lg leading-relaxed">ZnONP взаимодействует с клеточной стенкой бактерии, выделяя ионы Zn²⁺ и создавая активные формы кислорода.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-8 group relative">
+                    <div class="step-line" aria-hidden="true"></div>
+                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
+                        <span class="text-2xl font-black text-forest-300">02</span>
+                    </div>
+                    <div class="flex-1 pt-1">
+                        <h3 class="text-2xl font-bold mb-3">Повреждение мембраны аэроба</h3>
+                        <p class="text-white/70 text-lg leading-relaxed">Нарушение целостности мембраны S. aureus, E. coli, P. aeruginosa — путь открыт для метронидазола.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-8 group relative">
+                    <div class="step-line" aria-hidden="true"></div>
+                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
+                        <span class="text-2xl font-black text-forest-300">03</span>
+                    </div>
+                    <div class="flex-1 pt-1">
+                        <h3 class="text-2xl font-bold mb-3">Проникновение метронидазола</h3>
+                        <p class="text-white/70 text-lg leading-relaxed">В анаэробных условиях раны метронидазол восстанавливается ферредоксином, образуя цитотоксичные радикалы.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-8 group relative">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
+                        <span class="text-2xl font-black text-forest-300">04</span>
+                    </div>
+                    <div class="flex-1 pt-1">
+                        <h3 class="text-2xl font-bold mb-3">Повреждение ДНК и гибель патогена</h3>
+                        <p class="text-white/70 text-lg leading-relaxed">Токсичные метаболиты разрушают спираль ДНК анаэробов — Bacteroides, Clostridium, Peptostreptococcus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bioactive Compounds Data -->
+    <section class="py-32 bg-white" aria-labelledby="bio-heading">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="tag text-forest-600 mb-4">Фитохимический анализ</div>
+                    <h2 id="bio-heading" class="text-5xl font-black text-deep-green leading-tight mb-6">Содержание биологически активных веществ</h2>
+                    <p class="text-stone-500 text-lg leading-relaxed mb-8">Проведённый анализ показал значительные различия в содержании БАВ между изученными экстрактами.</p>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2"><span class="font-semibold text-deep-green">Эвкалипт — флавоноиды</span><span class="font-bold text-forest-600">5.01%</span></div>
+                            <div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-forest-400 to-forest-600 rounded-full data-bar" style="width: 100%" aria-hidden="true"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2"><span class="font-semibold text-deep-green">Боярышник — флавоноиды</span><span class="font-bold text-forest-600">0.1%</span></div>
+                            <div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-forest-400 to-forest-600 rounded-full data-bar" style="width: 2%" aria-hidden="true"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2"><span class="font-semibold text-deep-green">Женьшень — флавоноиды</span><span class="font-bold text-forest-600">0.12%</span></div>
+                            <div class="h-2 bg-stone-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-forest-400 to-forest-600 rounded-full data-bar" style="width: 2.4%" aria-hidden="true"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-stone-50 rounded-3xl p-8 border border-stone-100">
+                    <h3 class="text-lg font-bold text-deep-green mb-6">Результаты определения БАВ извлечений</h3>
+                    <div class="table-wrap">
+                        <table class="w-full text-sm">
+                            <thead><tr class="border-b border-stone-200"><th class="text-left py-3 font-semibold text-stone-500">Экстракт</th><th class="text-right py-3 font-semibold text-stone-500">FLN, %</th><th class="text-right py-3 font-semibold text-stone-500">ACN, %</th><th class="text-right py-3 font-semibold text-stone-500">АК, %</th></tr></thead>
+                            <tbody>
+                                <tr class="table-row border-b border-stone-100"><td class="py-3 font-medium text-deep-green">Эвкалипт</td><td class="py-3 text-right font-bold">5.01</td><td class="py-3 text-right">0.061</td><td class="py-3 text-right">0.009</td></tr>
+                                <tr class="table-row border-b border-stone-100"><td class="py-3 font-medium text-deep-green">Женьшень</td><td class="py-3 text-right font-bold">0.12</td><td class="py-3 text-right">0.00002</td><td class="py-3 text-right">0.028</td></tr>
+                                <tr class="table-row"><td class="py-3 font-medium text-deep-green">Боярышник</td><td class="py-3 text-right font-bold">0.1</td><td class="py-3 text-right">0.038</td><td class="py-3 text-right">0.1</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-4">FLN — флавоноиды, ACN — антоцианы, АК — аскорбиновая кислота</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Antimicrobial Results -->
+    <section id="results" class="py-32 bg-stone-50" aria-labelledby="results-heading">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="max-w-2xl mb-20">
+                <div class="tag text-forest-600 mb-4">In vitro</div>
+                <h2 id="results-heading" class="text-5xl font-black text-deep-green leading-tight mb-6">Антимикробная активность компонентов</h2>
+                <p class="text-stone-500 text-lg">Синергистический эффект комбинации метронидазола и ZnONP при соотношении 1:5.</p>
+            </div>
+            <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
+                <div class="table-wrap">
+                    <table class="w-full text-sm">
+                        <thead><tr class="bg-stone-50 border-b border-stone-200"><th class="text-left py-4 px-6 font-semibold text-stone-600">Компонент</th><th class="text-center py-4 px-4 font-semibold text-stone-600">E. coli</th><th class="text-center py-4 px-4 font-semibold text-stone-600">Clostridium sp.</th><th class="text-center py-4 px-4 font-semibold text-stone-600">P. fluorescens</th><th class="text-center py-4 px-4 font-semibold text-stone-600">B. subtilis</th></tr></thead>
+                        <tbody>
+                            <tr class="table-row border-b border-stone-100"><td class="py-4 px-6 font-medium text-deep-green">ZnONP</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center font-semibold">21.4±0.4</td><td class="py-4 px-4 text-center font-semibold">27.0±0.5</td><td class="py-4 px-4 text-center font-semibold">23.0±1</td></tr>
+                            <tr class="table-row border-b border-stone-100"><td class="py-4 px-6 font-medium text-deep-green">Метронидазол</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center text-stone-400">—</td></tr>
+                            <tr class="table-row border-b border-stone-100 bg-forest-50/50"><td class="py-4 px-6 font-bold text-deep-green">Метронидазол + ZnONP (1:5)</td><td class="py-4 px-4 text-center font-bold text-forest-700">23.0±0.3</td><td class="py-4 px-4 text-center font-bold text-forest-700">23.2±0.5</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center font-bold text-forest-700">33.0±0.4</td></tr>
+                            <tr class="table-row border-b border-stone-100"><td class="py-4 px-6 font-medium text-deep-green">Боярышник</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center font-semibold">17.0±0.2</td><td class="py-4 px-4 text-center font-semibold">35.0±0.8</td><td class="py-4 px-4 text-center font-semibold">19.0±0.5</td></tr>
+                            <tr class="table-row border-b border-stone-100"><td class="py-4 px-6 font-medium text-deep-green">Женьшень</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center font-semibold">23.0±0.25</td><td class="py-4 px-4 text-center font-semibold">35.0±0.7</td><td class="py-4 px-4 text-center font-semibold">22.0±0.5</td></tr>
+                            <tr class="table-row"><td class="py-4 px-6 font-medium text-deep-green">Эвкалипт</td><td class="py-4 px-4 text-center text-stone-400">—</td><td class="py-4 px-4 text-center font-semibold">19.2±0.3</td><td class="py-4 px-4 text-center font-semibold">41.0±1</td><td class="py-4 px-4 text-center font-semibold">25.0±0.3</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-6 py-4 bg-stone-50 border-t border-stone-200 text-xs text-stone-500">Диаметр зоны задержки роста, мм. Синергизм метронидазола и ZnONP проявляется против факультативных анаэробов.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eco Section -->
+    <section id="eco" class="py-32 bg-white overflow-hidden" aria-labelledby="eco-heading">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="tag text-forest-600 mb-4">Экологичность</div>
+                    <h2 id="eco-heading" class="text-5xl font-black text-deep-green leading-tight mb-6">Пектин из свекольного жома</h2>
+                    <p class="text-stone-500 text-lg leading-relaxed mb-8">Матрица пластыря получена из отходов сахарного производства. Свекольный пектин с ацетилированием 15–25% создаёт стабильный гидрогель для контролируемого высвобождения.</p>
+                    
+                    <div class="eco-timeline mt-12">
+                        <div class="eco-line" aria-hidden="true"><div class="eco-line-fill" id="eco-fill"></div></div>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div class="eco-step text-center" onmouseenter="highlightEco(0)" onclick="highlightEco(0)">
+                                <div class="eco-circle"><svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div>
+                                <p class="text-xs font-bold text-deep-green mt-3">Жом</p>
+                                <div class="eco-card">
+                                    <h4 class="font-bold text-deep-green mb-2">Свекольный жом</h4>
+                                    <p class="text-xs text-stone-600">Отходы сахарного производства — сырьё для экстракции пектина.</p>
+                                </div>
+                            </div>
+                            <div class="eco-step text-center" onmouseenter="highlightEco(1)" onclick="highlightEco(1)">
+                                <div class="eco-circle"><svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+                                <p class="text-xs font-bold text-deep-green mt-3">Экстракция</p>
+                                <div class="eco-card">
+                                    <h4 class="font-bold text-deep-green mb-2">Кислотная экстракция</h4>
+                                    <p class="text-xs text-stone-600">Обработка 5% раствором лимонной кислоты при 85°C.</p>
+                                </div>
+                            </div>
+                            <div class="eco-step text-center" onmouseenter="highlightEco(2)" onclick="highlightEco(2)">
+                                <div class="eco-circle"><svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                                <p class="text-xs font-bold text-deep-green mt-3">Пектин</p>
+                                <div class="eco-card">
+                                    <h4 class="font-bold text-deep-green mb-2">Свекольный пектин</h4>
+                                    <p class="text-xs text-stone-600">Степень ацетилирования 15–25%, этерификации 55–70%.</p>
+                                </div>
+                            </div>
+                            <div class="eco-step text-center" onmouseenter="highlightEco(3)" onclick="highlightEco(3)">
+                                <div class="eco-circle"><svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                                <p class="text-xs font-bold text-deep-green mt-3">GreenPatch</p>
+                                <div class="eco-card">
+                                    <h4 class="font-bold text-deep-green mb-2">Готовая система</h4>
+                                    <p class="text-xs text-stone-600">Многослойный гидрогель с контролируемым высвобождением.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-6 mt-12">
+                        <div class="text-center"><div class="text-4xl font-black text-deep-green">15–25<span class="text-lg text-stone-400">%</span></div><div class="text-xs text-stone-500 uppercase tracking-wider mt-1">степень ацетилирования</div></div>
+                        <div class="w-px h-12 bg-stone-200"></div>
+                        <div class="text-center"><div class="text-4xl font-black text-deep-green">55–70<span class="text-lg text-stone-400">%</span></div><div class="text-xs text-stone-500 uppercase tracking-wider mt-1">степень этерификации</div></div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="aspect-square rounded-3xl bg-gradient-to-br from-forest-100 to-stone-200 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 30% 40%, #14532d 1.5px, transparent 1.5px), radial-gradient(circle at 70% 60%, #14532d 1.5px, transparent 1.5px); background-size: 32px 32px;" aria-hidden="true"></div>
+                        <div class="relative z-10 text-center">
+                            <div class="w-40 h-40 mx-auto mb-6 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-xl border border-white/50">
+                                <svg class="w-20 h-20 text-deep-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            </div>
+                            <div class="text-sm font-semibold text-stone-500 uppercase tracking-widest">Вторичное использование</div>
+                            <div class="text-lg font-bold text-deep-green mt-1">отходов АПК</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section id="team" class="py-32 bg-stone-50" aria-labelledby="team-heading">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <div class="tag text-forest-600 mb-4">Команда</div>
+                <h2 id="team-heading" class="text-5xl font-black text-deep-green mb-4">Авторы проекта</h2>
+                <p class="text-stone-500">Национальный детский технопарк · Минск · 2026</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white rounded-2xl p-8 text-center border border-stone-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-forest-100 to-forest-200 flex items-center justify-center text-2xl font-black text-forest-800" aria-hidden="true">ВБ</div>
+                    <h3 class="font-bold text-lg text-deep-green">Борисевич Вадим</h3>
+                    <p class="text-sm text-stone-500 mt-1">Исследователь</p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 text-center border border-stone-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-forest-100 to-forest-200 flex items-center justify-center text-2xl font-black text-forest-800" aria-hidden="true">МП</div>
+                    <h3 class="font-bold text-lg text-deep-green">Полторацкая Милана</h3>
+                    <p class="text-sm text-stone-500 mt-1">Исследователь</p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 text-center border border-stone-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-forest-100 to-forest-200 flex items-center justify-center text-2xl font-black text-forest-800" aria-hidden="true">ЭП</div>
+                    <h3 class="font-bold text-lg text-deep-green">Пекарская Эльвира</h3>
+                    <p class="text-sm text-stone-500 mt-1">Исследователь</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-8 text-center border border-stone-100">
+                <p class="text-xs text-stone-400 uppercase tracking-wider mb-4">Руководители проекта</p>
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-stone-700 font-medium">
+                    <span>Флюрик Елена Андреевна</span><span class="text-stone-300" aria-hidden="true">·</span><span>Остроух Олег Владиславович</span><span class="text-stone-300" aria-hidden="true">·</span><span>Нестер Ольга Владимировна</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-deep-green text-white py-12 border-t border-white/10">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <p class="text-white/50 text-sm">УО «Национальный детский технопарк» · Республика Беларусь · Минск · 2026</p>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Наверх">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+    </button>
+
+    <script>
+        // ==================== DATA ====================
+        const LAYERS_DATA = [
+            { 
+                id: 0,
+                title: "Женьшень + Боярышник", 
+                subtitle: "Внешний слой", 
+                desc: "Противовоспалительное действие, защита тканей раны антиоксидантным эффектом. Повреждение мембран грамположительных бактерий и хелатирование металлов.",
+                shortDesc: "Противовоспалительное действие, защита тканей раны антиоксидантным эффектом, повреждение мембран грамположительных бактерий.",
+                tags: ["Противовоспалительное", "Антиоксидант", "Защита тканей"],
+                color: "#0ea5e9",
+                tailwindColor: "sky",
+                hex: 0x0ea5e9,
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
+            },
+            { 
+                id: 1,
+                title: "Эвкалипт", 
+                subtitle: "Средний слой", 
+                desc: "Разрушение зрелых биоплёнок S. aureus и E. coli. Подавление кворум-сенсинга и ингибирование эффлюксных насосов NorA. Потенцирование действия антибиотика.",
+                shortDesc: "Разрушение зрелых биоплёнок S. aureus и E. coli, подавление кворум-сенсинга, потенцирование действия антибиотика.",
+                tags: ["Антибиоплёночный", "Потенциатор", "Антиоксидант"],
+                color: "#f59e0b",
+                tailwindColor: "amber",
+                hex: 0xf59e0b,
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>`
+            },
+            { 
+                id: 2,
+                title: "Метронидазол + ZnONP", 
+                subtitle: "Контактный слой", 
+                desc: "Синергистический эффект: ZnO уничтожает аэробов на поверхности раны, метронидазол проникает в глубину к анаэробам. Оптимальное соотношение 1:5.",
+                shortDesc: "Синергистический эффект: ZnO уничтожает аэробов на поверхности, метронидазол проникает в глубину к анаэробам.",
+                tags: ["Аэробный", "Анаэробный", "Наночастицы"],
+                color: "#10b981",
+                tailwindColor: "emerald",
+                hex: 0x10b981,
+                icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+            }
+        ];
+
+        // ==================== RENDER LAYER CARDS ====================
+        function renderLayerCards() {
+            const container = document.getElementById('layer-cards-container');
+            container.innerHTML = LAYERS_DATA.map((layer, i) => `
+                <div class="layer-card bg-gradient-to-br from-${layer.tailwindColor}-50 to-${layer.tailwindColor === 'sky' ? 'blue' : layer.tailwindColor === 'amber' ? 'orange' : 'teal'}-50 rounded-3xl p-8 border border-${layer.tailwindColor}-200 ${i === 2 ? 'active' : ''}" onclick="focusLayer(${i})" tabindex="0" role="button" aria-label="Слой ${i + 1}: ${layer.title}" onkeydown="if(event.key==='Enter'||event.key===' ')focusLayer(${i})">
+                    <div class="layer-number text-${layer.tailwindColor}-900" aria-hidden="true">${i + 1}</div>
+                    <div class="flex items-center justify-between mb-6 relative z-10">
+                        <div class="w-12 h-12 rounded-xl bg-${layer.tailwindColor}-500/10 flex items-center justify-center text-${layer.tailwindColor}-700">
+                            ${layer.icon}
+                        </div>
+                        <div class="text-xs font-bold text-${layer.tailwindColor}-700 bg-${layer.tailwindColor}-100 px-3 py-1 rounded-full uppercase tracking-wider">${layer.subtitle}</div>
+                    </div>
+                    <div class="flex gap-3 mb-4 relative z-10">
+                        <div class="w-16 h-16 rounded-xl bg-white border-2 border-white shadow-md flex items-center justify-center text-xs font-bold text-${layer.tailwindColor}-700">
+                            ${i === 0 ? 'G+B' : i === 1 ? 'Euc' : 'ZnO'}
+                        </div>
+                        <div class="w-16 h-16 rounded-xl bg-white border-2 border-white shadow-md flex items-center justify-center text-xs font-bold text-${layer.tailwindColor}-700">
+                            ${i === 0 ? 'FLN' : i === 1 ? 'QSN' : 'Mtz'}
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-deep-green relative z-10">${layer.title}</h3>
+                    <p class="text-stone-600 text-sm leading-relaxed mb-6 relative z-10">${layer.shortDesc}</p>
+                    <div class="flex flex-wrap gap-2 relative z-10">
+                        ${layer.tags.map(tag => `<span class="text-xs bg-white/80 px-3 py-1.5 rounded-full text-${layer.tailwindColor}-800 font-medium border border-${layer.tailwindColor}-100">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== NAVBAR ====================
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) { navbar.classList.add('glass', 'shadow-sm'); } 
+            else { navbar.classList.remove('glass', 'shadow-sm'); }
+        });
+
+        // Back to top
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            backToTop.classList.toggle('visible', window.scrollY > 500);
+        });
+
+        // Nav highlight
+        function initNavHighlight() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.dataset.section === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -55% 0px' });
+            sections.forEach(section => observer.observe(section));
+        }
+
+        // ==================== COUNTERS ====================
+        function initCounters() {
+            if (typeof gsap === 'undefined') return;
+            gsap.utils.toArray('[data-count]').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const obj = { val: 0 };
+                gsap.to(obj, { 
+                    val: target, 
+                    duration: 2.5, 
+                    ease: "power2.out", 
+                    scrollTrigger: { trigger: counter, start: 'top 85%' },
+                    onUpdate: () => { counter.textContent = Math.round(obj.val); }
+                });
+            });
+        }
+
+        // ==================== ECO TIMELINE ====================
+        function highlightEco(index) {
+            document.querySelectorAll('.eco-step').forEach((step, i) => {
+                step.classList.toggle('active', i === index);
+            });
+        }
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            ScrollTrigger.create({
+                trigger: '#eco',
+                start: 'top 60%',
+                onEnter: () => { document.getElementById('eco-fill').style.width = '100%'; }
+            });
+        }
+
+        // ==================== INTERACTIVE 3D MODEL ====================
+        let scene, camera, renderer, patchGroup, raycaster, mouse;
+        let threeLayers = [];
+        let activeLayerIndex = 2;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let targetRotationY = 0;
+        let isWebGLAvailable = false;
+
+        function checkWebGL() {
+            try {
+                const canvas = document.createElement('canvas');
+                return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+            } catch(e) { return false; }
+        }
+
+        function init3D() {
+            if (!checkWebGL() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                initFallback();
+                return;
+            }
+            if (typeof THREE === 'undefined') {
+                initFallback();
+                return;
+            }
+            isWebGLAvailable = true;
+
+            const container = document.getElementById('three-canvas-container');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0f2818, 0.03);
+            
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 2.5, 7);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+            
+            patchGroup = new THREE.Group();
+            
+            // Create advanced layers
+            LAYERS_DATA.forEach((data, i) => {
+                const radius = 1.5 - i * 0.12;
+                const height = 0.22;
+                const yPos = 0.45 - i * 0.32;
+                
+                // Main mesh - physical glass-like material
+                const geometry = new THREE.CylinderGeometry(radius, radius * 0.92, height, 64, 4);
+                const material = new THREE.MeshPhysicalMaterial({
+                    color: data.hex,
+                    metalness: 0.05,
+                    roughness: 0.15,
+                    transmission: 0.4,
+                    thickness: 1.5,
+                    clearcoat: 1,
+                    clearcoatRoughness: 0.1,
+                    transparent: true,
+                    opacity: 0.85,
+                    side: THREE.DoubleSide,
+                    ior: 1.5
+                });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.y = yPos;
+                mesh.userData = { index: i, originalY: yPos, isLayer: true };
+                
+                // Wireframe overlay
+                const wireGeo = new THREE.EdgesGeometry(geometry);
+                const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 });
+                const wire = new THREE.LineSegments(wireGeo, wireMat);
+                wire.position.y = yPos;
+                
+                // Rotating ring
+                const ringGeo = new THREE.TorusGeometry(radius + 0.08, 0.025, 16, 100);
+                const ringMat = new THREE.MeshBasicMaterial({ color: data.hex, transparent: true, opacity: 0.5 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                ring.position.y = yPos;
+                ring.userData = { isRing: true, speed: 0.008 + i * 0.004 };
+                
+                // Inner glow ring
+                const glowGeo = new THREE.TorusGeometry(radius + 0.04, 0.04, 16, 100);
+                const glowMat = new THREE.MeshBasicMaterial({ color: data.hex, transparent: true, opacity: 0.08, side: THREE.DoubleSide });
+                const glowRing = new THREE.Mesh(glowGeo, glowMat);
+                glowRing.rotation.x = Math.PI / 2;
+                glowRing.position.y = yPos;
+                glowRing.userData = { isGlow: true, baseOpacity: 0.08 };
+                
+                // Molecules on surface (instanced)
+                const molCount = 30;
+                const molGeo = new THREE.SphereGeometry(0.035, 8, 8);
+                const molMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xffffff, 
+                    emissive: data.hex, 
+                    emissiveIntensity: 0.6,
+                    roughness: 0.3
+                });
+                const molMesh = new THREE.InstancedMesh(molGeo, molMat, molCount);
+                const dummy = new THREE.Object3D();
+                for (let j = 0; j < molCount; j++) {
+                    const angle = (j / molCount) * Math.PI * 2 + Math.random() * 0.5;
+                    const r = radius * (0.6 + Math.random() * 0.35);
+                    dummy.position.set(Math.cos(angle) * r, yPos + (Math.random() - 0.5) * height * 0.8, Math.sin(angle) * r);
+                    dummy.scale.setScalar(0.6 + Math.random() * 0.8);
+                    dummy.updateMatrix();
+                    molMesh.setMatrixAt(j, dummy.matrix);
+                }
+                
+                patchGroup.add(mesh);
+                patchGroup.add(wire);
+                patchGroup.add(ring);
+                patchGroup.add(glowRing);
+                patchGroup.add(molMesh);
+                threeLayers.push(mesh);
+            });
+            
+            // ZnO Particles - 600 instanced spheres with orbital motion
+            const pCount = 600;
+            const pGeo = new THREE.SphereGeometry(0.02, 6, 6);
+            const pMat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.8 });
+            const pMesh = new THREE.InstancedMesh(pGeo, pMat, pCount);
+            const pDummy = new THREE.Object3D();
+            const pData = [];
+            for (let i = 0; i < pCount; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const r = 2.5 + Math.random() * 2.5;
+                pData.push({ theta, phi, r, speed: 0.002 + Math.random() * 0.008, yOffset: (Math.random() - 0.5) * 4 });
+                pDummy.position.set(r * Math.sin(phi) * Math.cos(theta), (Math.random() - 0.5) * 3, r * Math.sin(phi) * Math.sin(theta));
+                pDummy.updateMatrix();
+                pMesh.setMatrixAt(i, pDummy.matrix);
+            }
+            pMesh.userData = { particles: pData };
+            patchGroup.add(pMesh);
+            
+            // Base platform
+            const baseGeo = new THREE.CylinderGeometry(2, 2.2, 0.08, 64);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x0a1f12, roughness: 0.9, metalness: 0.2 });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = -0.55;
+            patchGroup.add(base);
+            
+            // Base ring
+            const baseRingGeo = new THREE.TorusGeometry(2.1, 0.015, 16, 128);
+            const baseRingMat = new THREE.MeshBasicMaterial({ color: 0x22c55e, transparent: true, opacity: 0.3 });
+            const baseRing = new THREE.Mesh(baseRingGeo, baseRingMat);
+            baseRing.rotation.x = Math.PI / 2;
+            baseRing.position.y = -0.51;
+            patchGroup.add(baseRing);
+            
+            scene.add(patchGroup);
+            
+            // Lighting setup
+            scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+            
+            const spotLight = new THREE.SpotLight(0x34d399, 3);
+            spotLight.position.set(4, 8, 4);
+            spotLight.angle = Math.PI / 5;
+            spotLight.penumbra = 0.7;
+            spotLight.castShadow = true;
+            scene.add(spotLight);
+            
+            const rimLight = new THREE.DirectionalLight(0x60a5fa, 1.5);
+            rimLight.position.set(-4, 2, -4);
+            scene.add(rimLight);
+            
+            const fillLight = new THREE.PointLight(0xf59e0b, 0.5, 10);
+            fillLight.position.set(3, -1, 3);
+            scene.add(fillLight);
+            
+            const bottomLight = new THREE.PointLight(0x10b981, 0.6, 8);
+            bottomLight.position.set(0, -2, 0);
+            scene.add(bottomLight);
+            
+            // Raycaster
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+            
+            // Events
+            renderer.domElement.addEventListener('click', onMouseClick);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            window.addEventListener('mouseup', onMouseUp);
+            
+            // Touch
+            renderer.domElement.addEventListener('touchstart', onTouchStart, {passive: false});
+            renderer.domElement.addEventListener('touchmove', onTouchMove, {passive: false});
+            
+            // Hide loading
+            setTimeout(() => {
+                const loader = document.getElementById('three-loading');
+                if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }
+            }, 800);
+            
+            // Animation loop
+            const clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = clock.getElapsedTime();
+                
+                // Smooth rotation
+                patchGroup.rotation.y += (targetRotationY - patchGroup.rotation.y) * 0.05;
+                if (!isDragging) targetRotationY += 0.002;
+                
+                // Animate particles
+                const pArray = pMesh.userData.particles;
+                for (let i = 0; i < pCount; i++) {
+                    const d = pArray[i];
+                    d.theta += d.speed;
+                    const x = d.r * Math.sin(d.phi) * Math.cos(d.theta);
+                    const z = d.r * Math.sin(d.phi) * Math.sin(d.theta);
+                    const y = d.yOffset + Math.sin(time * 1.5 + d.theta * 3) * 0.3;
+                    pDummy.position.set(x, y, z);
+                    const scale = 0.5 + Math.sin(time * 3 + i) * 0.3;
+                    pDummy.scale.setScalar(scale);
+                    pDummy.updateMatrix();
+                    pMesh.setMatrixAt(i, pDummy.matrix);
+                }
+                pMesh.instanceMatrix.needsUpdate = true;
+                
+                // Animate rings and glows
+                patchGroup.children.forEach(child => {
+                    if (child.userData.isRing) {
+                        child.rotation.z += child.userData.speed;
+                    }
+                    if (child.userData.isGlow) {
+                        child.material.opacity = child.userData.baseOpacity + Math.sin(time * 2) * 0.04;
+                    }
+                });
+                
+                // Float
+                patchGroup.position.y = Math.sin(time * 0.6) * 0.1;
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Initial selection
+            selectLayer(2);
+            
+            window.addEventListener('resize', () => {
+                if (!renderer) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        function initFallback() {
+            document.getElementById('three-canvas-container').style.display = 'none';
+            document.getElementById('css3d-fallback').style.display = 'block';
+            document.getElementById('three-loading').style.display = 'none';
+            
+            const stage = document.getElementById('css3d-stage');
+            let rotX = 60, rotY = 0;
+            let isDrag = false, lastX, lastY;
+            
+            function updateTransform() {
+                stage.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            }
+            
+            stage.addEventListener('mousedown', e => { isDrag = true; lastX = e.clientX; lastY = e.clientY; });
+            window.addEventListener('mousemove', e => {
+                if (!isDrag) return;
+                rotY += (e.clientX - lastX) * 0.5;
+                rotX -= (e.clientY - lastY) * 0.3;
+                rotX = Math.max(0, Math.min(80, rotX));
+                lastX = e.clientX; lastY = e.clientY;
+                updateTransform();
+            });
+            window.addEventListener('mouseup', () => isDrag = false);
+            
+            // Auto rotate
+            setInterval(() => { if (!isDrag) { rotY += 0.3; updateTransform(); } }, 16);
+            updateTransform();
+        }
+
+        function onMouseDown(e) { isDragging = true; previousMousePosition = { x: e.offsetX, y: e.offsetY }; }
+        function onMouseUp() { isDragging = false; }
+        
+        function onMouseMove(e) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(threeLayers);
+            renderer.domElement.style.cursor = intersects.length > 0 ? 'pointer' : isDragging ? 'grabbing' : 'grab';
+            
+            if (isDragging) {
+                const deltaX = e.offsetX - previousMousePosition.x;
+                targetRotationY += deltaX * 0.008;
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            }
+        }
+        
+        function onTouchStart(e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }
+        function onTouchMove(e) {
+            if (!isDragging || e.touches.length !== 1) return;
+            e.preventDefault();
+            const deltaX = e.touches[0].clientX - previousMousePosition.x;
+            targetRotationY += deltaX * 0.01;
+            previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        
+        function onMouseClick(e) {
+            if (isDragging && Math.abs(e.offsetX - previousMousePosition.x) > 5) return;
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(threeLayers);
+            if (intersects.length > 0) {
+                selectLayer(intersects[0].object.userData.index);
+            }
+        }
+        
+        function selectLayer(index) {
+            activeLayerIndex = index;
+            const data = LAYERS_DATA[index];
+            
+            // Update dots
+            document.querySelectorAll('.layer-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+                dot.setAttribute('aria-selected', i === index);
+            });
+            
+            // Animate 3D layers (exploded view)
+            if (isWebGLAvailable && threeLayers.length > 0) {
+                threeLayers.forEach((layer, i) => {
+                    const gap = (2 - i) * 0.25; // explode gap
+                    const selectedLift = i === index ? 0.2 : 0;
+                    const targetY = layer.userData.originalY + gap + selectedLift;
+                    
+                    gsap.to(layer.position, { y: targetY, duration: 0.8, ease: "power3.out" });
+                    
+                    // Emissive highlight
+                    gsap.to(layer.material, { 
+                        emissiveIntensity: i === index ? 0.4 : 0,
+                        duration: 0.5 
+                    });
+                    layer.material.emissive = new THREE.Color(i === index ? data.hex : 0x000000);
+                    
+                    // Scale effect
+                    const targetScale = i === index ? 1.08 : 1;
+                    gsap.to(layer.scale, { x: targetScale, z: targetScale, duration: 0.6, ease: "back.out(1.7)" });
+                });
+            } else {
+                // CSS fallback animation
+                document.querySelectorAll('.css3d-layer').forEach((el, i) => {
+                    const baseY = [-50, 0, 50][i];
+                    const offset = (2 - i) * 30;
+                    const lift = i === index ? -20 : 0;
+                    el.style.transform = `translateY(${baseY + offset + lift}px) rotateX(60deg) scale(${i === index ? 1.1 : 1})`;
+                    el.style.borderColor = i === index ? data.color : data.color + '80';
+                    el.style.background = i === index ? `radial-gradient(circle, ${data.hex}40 0%, ${data.hex}10 70%)` : `radial-gradient(circle, ${data.hex}25 0%, ${data.hex}05 70%)`;
+                });
+            }
+            
+            // Update info panel
+            document.getElementById('info-title').textContent = data.title;
+            document.getElementById('info-subtitle').textContent = data.subtitle;
+            document.getElementById('info-desc').textContent = data.desc;
+            const tagsContainer = document.getElementById('info-tags');
+            tagsContainer.innerHTML = data.tags.map(t => `<span class="text-xs bg-white/10 px-2 py-1 rounded-md text-forest-200">${t}</span>`).join('');
+            
+            const infoPanel = document.getElementById('layer-info');
+            infoPanel.classList.add('visible');
+        }
+        
+        function focusLayer(index) {
+            document.getElementById('model3d').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => selectLayer(index), 600);
+        }
+
+        // Keyboard support for layer dots
+        document.querySelectorAll('.layer-dot').forEach((dot, i) => {
+            dot.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    const next = (i + 1) % 3;
+                    document.getElementById(`dot-${next}`).focus();
+                    selectLayer(next);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    const prev = (i - 1 + 3) % 3;
+                    document.getElementById(`dot-${prev}`).focus();
+                    selectLayer(prev);
+                }
+            });
+        });
+
+        // ==================== INIT ====================
+        window.addEventListener('load', () => {
+            renderLayerCards();
+            initNavHighlight();
+            
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                initCounters();
+                
+                gsap.utils.toArray('.reveal').forEach(el => {
+                    gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: 'top 85%' } });
+                });
+                gsap.utils.toArray('.layer-card').forEach((card, i) => {
+                    gsap.from(card, { y: 80, opacity: 0, duration: 1, delay: i * 0.2, ease: "power3.out", scrollTrigger: { trigger: card, start: 'top 85%' } });
+                });
+                gsap.utils.toArray('.therapy-card').forEach((card, i) => {
+                    gsap.from(card, { y: 60, opacity: 0, duration: 1, delay: i * 0.2, ease: "power3.out", scrollTrigger: { trigger: card, start: 'top 85%' } });
+                });
+            }
+            
+            // Delay 3D init slightly to let layout settle
+            setTimeout(() => {
+                try { init3D(); } 
+                catch(e) { console.warn('3D init failed:', e); initFallback(); }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+```
